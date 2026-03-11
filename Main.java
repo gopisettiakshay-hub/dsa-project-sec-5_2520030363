@@ -1,362 +1,413 @@
-package org.example;
-
 import java.util.*;
 
-public class Main {
+public class AdvancedFinanceDSA {
 
-    // Scanner object for user input
     static Scanner sc = new Scanner(System.in);
 
-    // -----------------------------------------------------------
-    // USER CLASS
-    // Topic Used: Object Oriented Programming + Abstract Data Type Concept
-    // This class acts like a simple ADT to store user credentials
-    // -----------------------------------------------------------
-    static class User {
-        String username;
-        String password;
+    // ===============================================
+    // LOGIN / SIGNUP SYSTEM
+    // ===============================================
 
-        User(String u, String p) {
-            username = u;
-            password = p;
-        }
-    }
+    static String username = "";
+    static String password = "";
+    static boolean loggedIn = false;
 
-    // -----------------------------------------------------------
-    // TRANSACTION CLASS
-    // Topic Used: List ADT concept (each object acts like a node/item)
-    // Used to store financial transaction information
-    // -----------------------------------------------------------
-    static class Transaction {
-
-        int id;
-        String type;
-        double amount;
-        int month;
-        int year;
-
-        Transaction(int id, String type, double amount, int month, int year) {
-            this.id = id;
-            this.type = type;
-            this.amount = amount;
-            this.month = month;
-            this.year = year;
-        }
-
-        // Display transaction details
-        void display() {
-            System.out.println("ID: " + id +
-                    " | Type: " + type +
-                    " | Amount: " + amount +
-                    " | Month: " + month +
-                    " | Year: " + year);
-        }
-    }
-
-    // -----------------------------------------------------------
-    // DATA STORAGE
-    // Topic Used: List ADT implementation using Array
-    // -----------------------------------------------------------
-    static User users[] = new User[50];
-    static int userCount = 0;
-
-    static Transaction arr[] = new Transaction[200];
-    static int count = 0;
-
-    // -----------------------------------------------------------
-    // SIGN UP
-    // Topic Used: List insertion operation (Array based list)
-    // -----------------------------------------------------------
     static void signup() {
 
-        System.out.println("\n--- Sign Up ---");
-
+        System.out.println("\n--- SIGN UP ---");
         System.out.print("Create Username: ");
-        String u = sc.next();
+        username = sc.next();
 
         System.out.print("Create Password: ");
-        String p = sc.next();
+        password = sc.next();
 
-        // inserting user into list
-        users[userCount++] = new User(u, p);
-
-        System.out.println("Account Created Successfully\n");
+        System.out.println("Account Created Successfully");
     }
 
-    // -----------------------------------------------------------
-    // LOGIN
-    // Topic Used: Searching Algorithm
-    // Linear Search (O(n))
-    // -----------------------------------------------------------
-    static boolean login() {
+    static void login() {
 
-        System.out.println("\n--- Login ---");
+        System.out.println("\n--- LOGIN ---");
 
-        System.out.print("Username: ");
+        System.out.print("Enter Username: ");
         String u = sc.next();
 
-        System.out.print("Password: ");
+        System.out.print("Enter Password: ");
         String p = sc.next();
 
-        // Linear Search to find matching user
-        for (int i = 0; i < userCount; i++) {
+        if (u.equals(username) && p.equals(password)) {
+            loggedIn = true;
+            System.out.println("Login Successful");
+        } else {
+            System.out.println("Invalid Credentials");
+        }
+    }
 
-            if (users[i].username.equals(u) &&
-                    users[i].password.equals(p)) {
+    static void logout() {
+        loggedIn = false;
+        System.out.println("Logged Out");
+    }
 
-                System.out.println("Login Successful\n");
-                return true;
-            }
+    // ===============================================
+    // CIRCULAR LINKED LIST (CO2)
+    // ===============================================
+
+    static class Node {
+
+        int id;
+        double amount;
+        String type;
+        Node next;
+
+        Node(int id, double amount, String type) {
+            this.id = id;
+            this.amount = amount;
+            this.type = type;
+        }
+    }
+
+    static Node head = null;
+
+    static void addTransaction(int id, double amount, String type) {
+
+        Node newNode = new Node(id, amount, type);
+
+        if (head == null) {
+
+            head = newNode;
+            head.next = head;
+        } else {
+
+            Node temp = head;
+
+            while (temp.next != head)
+                temp = temp.next;
+
+            temp.next = newNode;
+            newNode.next = head;
         }
 
-        System.out.println("Invalid Login\n");
-        return false;
+        System.out.println("Transaction Added");
     }
 
-    // -----------------------------------------------------------
-    // ADD TRANSACTION
-    // Topic Used: List insertion operation
-    // -----------------------------------------------------------
-    static void addTransaction() {
+    static void displayTransactions() {
 
-        System.out.print("Enter ID: ");
-        int id = sc.nextInt();
-
-        System.out.print("Type (Income/Expense): ");
-        String type = sc.next();
-
-        System.out.print("Amount: ");
-        double amount = sc.nextDouble();
-
-        System.out.print("Month (1-12): ");
-        int month = sc.nextInt();
-
-        System.out.print("Year: ");
-        int year = sc.nextInt();
-
-        // inserting transaction into list
-        arr[count++] = new Transaction(id, type, amount, month, year);
-
-        System.out.println("Transaction Added\n");
-    }
-
-    // -----------------------------------------------------------
-    // VIEW HISTORY
-    // Topic Used: List traversal
-    // -----------------------------------------------------------
-    static void viewHistory() {
-
-        if (count == 0) {
-            System.out.println("No Transactions\n");
+        if (head == null) {
+            System.out.println("No Transactions");
             return;
         }
 
-        System.out.println("\n--- Transaction History ---");
+        Node temp = head;
 
-        // Traversing list
-        for (int i = 0; i < count; i++) {
-            arr[i].display();
+        do {
+
+            System.out.println("ID:" + temp.id +
+                    " Amount:" + temp.amount +
+                    " Type:" + temp.type);
+
+            temp = temp.next;
+
+        } while (temp != head);
+    }
+
+    // ===============================================
+    // MERGE SORT (CO1 - Sorting)
+    // ===============================================
+
+    static void mergeSort(double arr[], int l, int r) {
+
+        if (l < r) {
+
+            int m = (l + r) / 2;
+
+            mergeSort(arr, l, m);
+            mergeSort(arr, m + 1, r);
+
+            merge(arr, l, m, r);
+        }
+    }
+
+    static void merge(double arr[], int l, int m, int r) {
+
+        int n1 = m - l + 1;
+        int n2 = r - m;
+
+        double L[] = new double[n1];
+        double R[] = new double[n2];
+
+        for (int i = 0; i < n1; i++)
+            L[i] = arr[l + i];
+
+        for (int j = 0; j < n2; j++)
+            R[j] = arr[m + 1 + j];
+
+        int i = 0, j = 0, k = l;
+
+        while (i < n1 && j < n2) {
+
+            if (L[i] <= R[j])
+                arr[k++] = L[i++];
+            else
+                arr[k++] = R[j++];
+        }
+
+        while (i < n1)
+            arr[k++] = L[i++];
+
+        while (j < n2)
+            arr[k++] = R[j++];
+    }
+
+    // ===============================================
+    // BINARY SEARCH (CO1 - Searching)
+    // ===============================================
+
+    static int binarySearch(int arr[], int key) {
+
+        int low = 0;
+        int high = arr.length - 1;
+
+        while (low <= high) {
+
+            int mid = (low + high) / 2;
+
+            if (arr[mid] == key)
+                return mid;
+
+            else if (arr[mid] < key)
+                low = mid + 1;
+
+            else
+                high = mid - 1;
+        }
+
+        return -1;
+    }
+
+    // ===============================================
+    // DEQUE IMPLEMENTATION (CO3)
+    // ===============================================
+
+    static Deque<String> deque = new ArrayDeque<>();
+
+    static void dequeDemo() {
+
+        deque.addFirst("Income Entry");
+        deque.addLast("Expense Entry");
+
+        System.out.println("Deque Elements: " + deque);
+
+        deque.removeFirst();
+        deque.removeLast();
+    }
+
+    // ===============================================
+    // POLYNOMIAL ADT (CO3 - ADT Concept)
+    // ===============================================
+
+    static class Term {
+
+        int coeff;
+        int power;
+
+        Term(int c, int p) {
+            coeff = c;
+            power = p;
+        }
+    }
+
+    static void polynomialDemo() {
+
+        List<Term> poly = new ArrayList<>();
+
+        poly.add(new Term(3, 2));
+        poly.add(new Term(5, 1));
+        poly.add(new Term(2, 0));
+
+        System.out.print("Polynomial: ");
+
+        for (Term t : poly) {
+
+            System.out.print(t.coeff + "x^" + t.power + " ");
         }
 
         System.out.println();
     }
 
-    // -----------------------------------------------------------
-    // MONTHLY INCOME CALCULATION
-    // Topic Used: Traversal + Algorithm Analysis
-    // Running Time: O(n)
-    // -----------------------------------------------------------
-    static void monthlyIncome() {
+    // ===============================================
+    // HEAP IMPLEMENTATION FROM SCRATCH (CO5)
+    // ===============================================
 
-        System.out.print("Enter Month: ");
-        int m = sc.nextInt();
+    static class MaxHeap {
 
-        System.out.print("Enter Year: ");
-        int y = sc.nextInt();
+        int heap[] = new int[100];
+        int size = 0;
 
-        double total = 0;
+        void insert(int val) {
 
-        for (int i = 0; i < count; i++) {
+            heap[++size] = val;
+            int i = size;
 
-            if (arr[i].type.equalsIgnoreCase("Income")
-                    && arr[i].month == m
-                    && arr[i].year == y) {
+            while (i > 1 && heap[i] > heap[i / 2]) {
 
-                total += arr[i].amount;
+                int temp = heap[i];
+                heap[i] = heap[i / 2];
+                heap[i / 2] = temp;
+
+                i = i / 2;
             }
         }
 
-        System.out.println("Monthly Income = " + total + "\n");
-    }
+        int deleteMax() {
 
-    // -----------------------------------------------------------
-    // YEARLY INCOME CALCULATION
-    // Topic Used: Traversal + Running Time Analysis
-    // -----------------------------------------------------------
-    static void yearlyIncome() {
+            int max = heap[1];
+            heap[1] = heap[size--];
 
-        System.out.print("Enter Year: ");
-        int y = sc.nextInt();
+            heapify(1);
 
-        double total = 0;
-
-        for (int i = 0; i < count; i++) {
-
-            if (arr[i].type.equalsIgnoreCase("Income")
-                    && arr[i].year == y) {
-
-                total += arr[i].amount;
-            }
+            return max;
         }
 
-        System.out.println("Yearly Income = " + total + "\n");
-    }
+        void heapify(int i) {
 
-    // -----------------------------------------------------------
-    // SORT TRANSACTIONS
-    // Topic Used: Sorting Algorithm
-    // Bubble Sort
-    // Time Complexity: O(n²)
-    // -----------------------------------------------------------
-    static void sortTransactions() {
+            int largest = i;
 
-        for (int i = 0; i < count - 1; i++) {
+            int left = 2 * i;
+            int right = 2 * i + 1;
 
-            for (int j = 0; j < count - i - 1; j++) {
+            if (left <= size && heap[left] > heap[largest])
+                largest = left;
 
-                if (arr[j].amount > arr[j + 1].amount) {
+            if (right <= size && heap[right] > heap[largest])
+                largest = right;
 
-                    Transaction temp = arr[j];
-                    arr[j] = arr[j + 1];
-                    arr[j + 1] = temp;
-                }
+            if (largest != i) {
+
+                int temp = heap[i];
+                heap[i] = heap[largest];
+                heap[largest] = temp;
+
+                heapify(largest);
             }
         }
-
-        System.out.println("Transactions Sorted\n");
     }
 
-    // -----------------------------------------------------------
-    // SEARCH TRANSACTION
-    // Topic Used: Searching Algorithm
-    // Linear Search
-    // -----------------------------------------------------------
-    static void searchTransaction() {
+    static MaxHeap heap = new MaxHeap();
 
-        System.out.print("Enter Transaction ID: ");
-        int key = sc.nextInt();
+    static void heapDemo() {
 
-        // Linear search
-        for (int i = 0; i < count; i++) {
+        heap.insert(2000);
+        heap.insert(5000);
+        heap.insert(1000);
 
-            if (arr[i].id == key) {
-
-                System.out.println("Transaction Found:");
-                arr[i].display();
-                System.out.println();
-                return;
-            }
-        }
-
-        System.out.println("Transaction Not Found\n");
+        System.out.println("Highest Transaction: " + heap.deleteMax());
     }
 
-    // -----------------------------------------------------------
-    // USER MENU
-    // Topic Used: Control Structures + Algorithm Flow
-    // -----------------------------------------------------------
-    static void financeMenu() {
+    // ===============================================
+    // MAIN MENU
+    // ===============================================
 
-        int choice;
-
-        do {
-
-            System.out.println("----- Personal Finance System -----");
-            System.out.println("1 Add Transaction");
-            System.out.println("2 View History");
-            System.out.println("3 Monthly Income");
-            System.out.println("4 Yearly Income");
-            System.out.println("5 Sort Transactions");
-            System.out.println("6 Search Transaction");
-            System.out.println("7 Logout");
-
-            System.out.print("Enter Choice: ");
-            choice = sc.nextInt();
-
-            switch (choice) {
-
-                case 1:
-                    addTransaction();
-                    break;
-
-                case 2:
-                    viewHistory();
-                    break;
-
-                case 3:
-                    monthlyIncome();
-                    break;
-
-                case 4:
-                    yearlyIncome();
-                    break;
-
-                case 5:
-                    sortTransactions();
-                    break;
-
-                case 6:
-                    searchTransaction();
-                    break;
-
-                case 7:
-                    System.out.println("Logged Out\n");
-                    break;
-
-                default:
-                    System.out.println("Invalid Choice\n");
-            }
-
-        } while (choice != 7);
-    }
-
-    // -----------------------------------------------------------
-    // MAIN FUNCTION
-    // Topic Used: Program Control + Menu Driven Algorithm
-    // -----------------------------------------------------------
     public static void main(String[] args) {
 
         int choice;
 
-        do {
+        while (true) {
 
-            System.out.println("------ Welcome ------");
-            System.out.println("1 Sign Up");
-            System.out.println("2 Login");
-            System.out.println("3 Exit");
+            if (!loggedIn) {
 
-            System.out.print("Enter Choice: ");
-            choice = sc.nextInt();
+                System.out.println("\n1 SignUp");
+                System.out.println("2 Login");
+                System.out.println("3 Exit");
 
-            switch (choice) {
+                choice = sc.nextInt();
 
-                case 1:
-                    signup();
-                    break;
+                switch (choice) {
 
-                case 2:
-                    if (login())
-                        financeMenu();
-                    break;
+                    case 1:
+                        signup();
+                        break;
 
-                case 3:
-                    System.out.println("Program Closed");
-                    break;
+                    case 2:
+                        login();
+                        break;
 
-                default:
-                    System.out.println("Invalid Choice\n");
+                    case 3:
+                        System.exit(0);
+                }
+
+            } else {
+
+                System.out.println("\n--- ADVANCED FINANCE SYSTEM ---");
+
+                System.out.println("1 Add Transaction");
+                System.out.println("2 Display Transactions");
+                System.out.println("3 Merge Sort Demo");
+                System.out.println("4 Binary Search Demo");
+                System.out.println("5 Deque Demo");
+                System.out.println("6 Polynomial ADT Demo");
+                System.out.println("7 Heap Demo");
+                System.out.println("8 Logout");
+
+                choice = sc.nextInt();
+
+                switch (choice) {
+
+                    case 1:
+
+                        System.out.print("Enter ID: ");
+                        int id = sc.nextInt();
+
+                        System.out.print("Enter Amount: ");
+                        double amt = sc.nextDouble();
+
+                        System.out.print("Type: ");
+                        String type = sc.next();
+
+                        addTransaction(id, amt, type);
+                        break;
+
+                    case 2:
+                        displayTransactions();
+                        break;
+
+                    case 3:
+
+                        double arr[] = {500, 200, 800, 100};
+                        mergeSort(arr, 0, arr.length - 1);
+
+                        System.out.println("Sorted Transactions:");
+
+                        for (double v : arr)
+                            System.out.print(v + " ");
+
+                        System.out.println();
+                        break;
+
+                    case 4:
+
+                        int nums[] = {10, 20, 30, 40, 50};
+
+                        int pos = binarySearch(nums, 30);
+
+                        System.out.println("Found at index: " + pos);
+                        break;
+
+                    case 5:
+                        dequeDemo();
+                        break;
+
+                    case 6:
+                        polynomialDemo();
+                        break;
+
+                    case 7:
+                        heapDemo();
+                        break;
+
+                    case 8:
+                        logout();
+                        break;
+                }
             }
-
-        } while (choice != 3);
+        }
     }
 }
